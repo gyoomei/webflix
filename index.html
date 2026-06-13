@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEBFLIX — Nonton Film & Series Online Sub Indonesia</title>
+<meta name="description" content="Nonton film & series terbaru kualitas HD sub Indonesia gratis di WEBFLIX.">
+<style>
+:root{--bg:#0b0b0f;--accent:#e50914;--text:#fff;--muted:#9a9aa5;--panel:#16161d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{text-decoration:none;color:inherit}
+.nav a.brand{font-weight:900;font-size:20px;color:var(--accent);letter-spacing:-1.5px;flex:0 0 auto;padding-right:10px}
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:40;width:fit-content;max-width:94vw;display:flex;align-items:center;flex-wrap:nowrap;justify-content:center;gap:3px;font-size:14px;background:transparent;border:1px solid transparent;border-radius:999px;padding:5px 7px;transition:background .3s,box-shadow .3s,border-color .3s,backdrop-filter .3s}
+.nav.solid{background:#16161db0;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:#ffffff14;box-shadow:0 10px 34px #00000055}
+.nav a{display:inline-flex;align-items:center;gap:6px;color:#d8d8e0;cursor:pointer;white-space:nowrap;padding:7px 9px;border-radius:999px;transition:.15s}
+.nav a:hover{color:#fff;background:#ffffff10}
+.nav a.active{color:#fff;font-weight:600;background:var(--accent)}
+.nav .nico{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:0}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-left:6px}
+.nav-toggle svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+@media(max-width:1240px){.nav{position:fixed;top:10px;left:10px;right:10px;transform:none;width:auto;max-width:none;flex-wrap:wrap;justify-content:flex-start;gap:8px;background:#16161de8;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:#ffffff14;box-shadow:0 8px 24px #00000066;padding:7px 12px}.nav .brand{order:-2;margin-right:auto}.nav-toggle{display:block;order:0}.nav a:not(.brand),.nav .search,.nav .langbtn{display:none}.nav.open{row-gap:2px;border-radius:16px}.nav.open a:not(.brand){display:flex;width:100%;padding:11px 14px}.nav.open .search{display:block;width:100%;margin-top:6px}.nav.open .search input{width:100%}.nav.open .langbtn{display:block;width:100%;margin:8px 0 0;padding:11px;text-align:center}}
+.langbtn{margin-left:6px;padding:7px 12px;border-radius:999px;border:1px solid #ffffff22;line-height:1;background:#000000aa;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.search{position:relative}.search input{width:90px;padding:7px 12px;border-radius:999px;border:1px solid transparent;background:#000000aa;color:var(--text);font-size:14px;outline:none;transition:width .25s}.search input:focus{width:150px;border-color:var(--accent)}
+.hero{position:relative;height:88vh;min-height:600px;max-height:940px;overflow:hidden}
+.hero-slide{position:absolute;inset:0;display:flex;align-items:flex-end;padding:0 4vw 56px;opacity:0;z-index:1;transition:opacity .55s ease;pointer-events:none}
+.hero-slide.active{opacity:1;z-index:2;pointer-events:auto}
+.hero-slide.prev{opacity:1;z-index:1;transition:none}.hero-slide.prev .hero-content{opacity:0;transition:none}
+.hero-content{transform:translateY(12px);transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.hero-slide.active .hero-content{transform:none}
+.hero-badges{display:flex;gap:8px;align-items:center;margin-bottom:13px;flex-wrap:wrap}
+.hero-rank{display:inline-block;background:#f5c518;color:#0b0b0f;font-size:12px;font-weight:800;letter-spacing:.4px;padding:4px 11px;border-radius:999px;text-transform:uppercase}
+.hero-type{display:inline-block;background:var(--accent);color:#fff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:4px 11px;border-radius:999px;text-transform:uppercase}
+.hero-dots{position:absolute;bottom:20px;right:4vw;z-index:6;display:flex;gap:8px}
+.hero-dot{position:relative;width:9px;height:9px;border-radius:999px;border:none;background:#ffffff44;cursor:pointer;padding:0;overflow:hidden;transition:width .3s,background .3s}
+.hero-dot.active{width:34px;background:#ffffff30}
+.hero-dot-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);border-radius:999px}
+@media(max-width:760px){.hero{height:72vh;min-height:480px}.hero-dots{bottom:14px}.hero-slide{padding-bottom:40px}}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center top;z-index:0}
+.hero-slide::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#0b0b0fcc 0%,#0b0b0fa6 18%,#0b0b0f73 38%,#0b0b0f33 58%,transparent 78%),linear-gradient(0deg,#0b0b0f 0%,#0b0b0f 4%,#0b0b0fec 8%,#0b0b0fd4 11%,#0b0b0fb8 14%,#0b0b0f99 17%,#0b0b0f7a 20%,#0b0b0f5c 23%,#0b0b0f40 26%,#0b0b0f29 29%,#0b0b0f14 32%,transparent 35%)}
+.hero-content{position:relative;z-index:2;max-width:560px}
+.hero h1{font-size:clamp(28px,4vw,52px);font-weight:900;line-height:1.05;margin-bottom:14px;text-shadow:0 2px 20px #000000aa}
+.hero-meta{display:flex;gap:0;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.hero-meta .q{background:var(--accent);padding:3px 9px;border-radius:4px;font-size:12px;font-weight:700}
+.hero-meta span{font-size:13px;color:#d8d8e0;display:inline-flex;align-items:center}
+.hero-meta span:empty{display:none}
+.hero-meta span+span::before{content:'\2022';margin:0 9px;color:#8a8a96;font-size:11px}
+.hero-meta .r{color:#f5c518;font-weight:700}
+.hero p{font-size:15px;color:#d0d0d8;line-height:1.6;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.btn-play{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#fff;padding:11px 28px;border-radius:6px;font-weight:700;font-size:16px;transition:.15s;cursor:pointer}
+.btn-play:hover{background:#f6121d}
+.rows{padding:30px 0 60px;margin-top:-12px;position:relative;z-index:5}
+.row{margin:26px 0}
+.row h2{font-size:19px;font-weight:700;margin:0 4vw 12px;display:flex;align-items:center;gap:8px}
+.row-scroll{display:flex;gap:11px;overflow-x:auto;padding:4px 4vw;scroll-behavior:smooth;scrollbar-width:none;cursor:grab}
+.row-scroll.drag{cursor:grabbing;scroll-behavior:auto;user-select:none}
+.row-scroll.drag .tile{pointer-events:none}
+.row-scroll::-webkit-scrollbar{display:none}
+.tile{flex:0 0 auto;width:155px;cursor:pointer;transition:transform .2s}
+.tile:hover{transform:scale(1.06)}
+.tile .poster{position:relative;aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:#1c1c26}
+.tile .poster img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .q{position:absolute;top:7px;right:7px;background:#000000bb;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.tile .rt{position:absolute;bottom:7px;left:7px;background:var(--accent);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700}
+.tile h3{font-size:13px;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d8d8e0}
+.yr{color:#8b8b96;font-weight:400}
+.tile-sk{flex:0 0 auto;width:155px}
+.tile-sk .poster{aspect-ratio:2/3;border-radius:8px;background:linear-gradient(90deg,#1a1a26 25%,#22222f 50%,#1a1a26 75%);background-size:200% 100%;animation:sk 1.2s infinite}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.cw-tile{flex:0 0 auto;width:280px;cursor:pointer;transition:transform .2s;text-decoration:none}
+.cw-tile:hover{transform:scale(1.04)}
+.cw-thumb{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1c1c26}
+.cw-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cw-tile .cw-x{position:absolute;top:6px;right:6px;z-index:3;width:24px;height:24px;border:none;border-radius:50%;background:#000000c4;color:#fff;font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s}
+.cw-tile:hover .cw-x{opacity:1}
+.cw-tile .cw-x:hover{background:var(--accent)}
+.cw-play{position:absolute;inset:0;margin:auto;width:46px;height:46px;border-radius:50%;background:#00000080;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;padding-left:3px;opacity:0;transition:.15s;z-index:2}
+.cw-tile:hover .cw-play{opacity:1}
+.cw-tile .cw-bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:#00000080;z-index:2}
+.cw-tile .cw-bar span{display:block;height:100%;background:var(--accent)}
+.cw-tile h3{font-size:13px;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d8d8e0}
+.cw-tile .cw-se{position:absolute;left:7px;top:7px;z-index:3;background:#000000c4;color:#fff;font-size:13px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.3px}
+.cw-tile .cw-left{position:absolute;left:7px;bottom:10px;z-index:3;background:#000000c4;color:#fff;font-size:12px;font-weight:600;padding:3px 9px;border-radius:5px}
+@media(max-width:760px){.cw-tile{width:220px}}
+.gridview{padding:90px 4vw 60px;display:none}
+.gridview.show{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.grid .tile,.grid .tile-sk{width:auto;min-width:0}
+@media(max-width:760px){.grid{grid-template-columns:repeat(3,1fr);gap:10px}}
+.grid.genre-cards{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.grid.grid-empty{display:block}
+.wf-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 20px;min-height:46vh;color:#9a9aa5}
+.wf-empty h3{margin:0 0 8px;font-size:22px;font-weight:700;color:#fff}
+.wf-empty p{margin:0 0 22px;font-size:15px;max-width:340px;line-height:1.5}
+.wf-empty-cta{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:999px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;text-decoration:none;transition:transform .15s}
+.wf-empty-cta:hover{transform:translateY(-2px)}
+.genre-card{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:18px 14px;background:var(--panel);border:1px solid #ffffff10;border-radius:12px;cursor:pointer;transition:.15s;font-size:15px;color:#e8e8ee;text-align:center}
+.genre-card:hover{background:#1f1f29;border-color:var(--accent);transform:translateY(-2px)}
+.genre-card span{font-weight:700}.genre-card b{font-size:13px;color:#7a7a85;font-weight:600}
+.gridview h2{font-size:20px;margin-bottom:18px}
+.sort-pills{display:flex;gap:8px;flex-wrap:wrap;margin:-6px 0 18px}
+.sort-pill{padding:6px 15px;border-radius:999px;border:1px solid #ffffff1f;background:#ffffff0a;color:#cfcfd8;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.sort-pill:hover{border-color:var(--accent);color:#fff}
+.sort-pill.act{background:var(--accent);border-color:var(--accent);color:#fff}
+.list-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:-6px 0 20px}
+.wf-sel{appearance:none;-webkit-appearance:none;background:#16161d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9aa5' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center;border:1px solid #ffffff1f;color:#e6e6ee;font-size:13px;font-weight:600;padding:8px 30px 8px 13px;border-radius:10px;cursor:pointer;transition:.15s;max-width:180px}
+.wf-sel:hover{border-color:var(--accent)}.wf-sel:focus{outline:none;border-color:var(--accent)}.wf-sel option{background:#16161d;color:#e6e6ee}
+.pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:34px 0 10px}
+.pager .pg{min-width:38px;height:38px;padding:0 10px;border-radius:8px;border:1px solid #ffffff1a;background:#16161d;color:#d8d8e0;font-size:14px;cursor:pointer;transition:.15s}
+.pager .pg:hover:not(:disabled){background:#ffffff15;color:#fff}
+.pager .pg.act{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.pager .pg:disabled{opacity:.3;cursor:default}
+.loadbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:40;transition:width .3s;box-shadow:0 0 10px var(--accent)}
+.homeview.hide{display:none}
+/* Auth overlay */
+.wf-overlay{position:fixed;inset:0;background:#000a;backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.wf-overlay.open{display:flex}
+.wf-card{width:100%;max-width:380px;background:#16161d;border:1px solid #ffffff1f;border-radius:18px;padding:26px 24px;box-shadow:0 24px 60px #000c}
+.wf-card h3{margin:0 0 4px;font-size:21px;color:#fff;font-weight:800}
+.wf-card .sub{margin:0 0 18px;font-size:13px;color:#9a9aa5}
+.wf-field{margin-bottom:13px}
+.wf-field label{display:block;font-size:12px;color:#9a9aa5;margin-bottom:5px;font-weight:600}
+.wf-field input{width:100%;padding:11px 13px;border-radius:10px;background:#0e0e14;border:1px solid #ffffff1f;color:#fff;font-size:14px;box-sizing:border-box}
+.wf-field input:focus{outline:none;border-color:var(--accent)}
+.wf-pw-wrap{position:relative}.wf-pw-wrap input{padding-right:44px}
+.wf-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);cursor:pointer;color:#7a7a85;font-size:16px}
+.wf-submit{width:100%;padding:12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;font-weight:700;font-size:15px;margin-top:6px}
+.wf-submit:hover{filter:brightness(1.1)}.wf-submit:disabled{opacity:.6;cursor:default}
+.wf-err{color:#ff6b6b;font-size:13px;margin:4px 0 0;min-height:17px}
+.wf-switch{text-align:center;margin-top:15px;font-size:13px;color:#9a9aa5}
+.wf-switch a{color:var(--accent);cursor:pointer;font-weight:600}
+.wf-x{float:right;cursor:pointer;color:#9a9aa5;font-size:22px;line-height:1}.wf-x:hover{color:#fff}
+/* User chip */
+#wfAuthSlot{display:flex;align-items:center;gap:8px}
+.wf-authbtn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;border-radius:999px;font-size:14px;font-weight:600;background:var(--accent);color:#fff;border:none;white-space:nowrap}
+.wf-uchip{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:5px 12px 5px 6px;border-radius:999px;background:#ffffff14;border:1px solid #ffffff1f}
+.wf-av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex:0 0 auto;overflow:hidden}
+.wf-uname{font-size:13px;color:#fff;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wf-rolebadge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;color:#fff;letter-spacing:.3px;white-space:nowrap}
+.wf-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:#16161dF2;backdrop-filter:blur(14px);border:1px solid #ffffff1f;border-radius:14px;padding:8px;z-index:60;box-shadow:0 12px 40px #000a;display:none}
+.wf-menu.open{display:block}
+.wf-menu .mi{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:9px;cursor:pointer;color:#d8d8e0;font-size:14px}
+.wf-menu .mi:hover{background:#ffffff12;color:#fff}
+.wf-menu .sep{height:1px;background:#ffffff14;margin:6px 4px}
+.wf-userwrap{position:relative;display:inline-flex;align-items:center}
+</style>
+</head>
+<body>
+<div class="loadbar" id="loadbar"></div>
+<nav class="nav" id="hdr">
+  <a class="brand" href="/">WEBFLIX</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a id="navhome" href="/"><svg viewBox="0 0 24 24" class="nico"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Beranda</a>
+  <a data-kind="movies"><svg viewBox="0 0 24 24" class="nico"><path d="M3 5h18v14H3zM7 5v14M17 5v14M3 9h4M3 13h4M17 9h4M17 13h4"/></svg>Film</a>
+  <a data-kind="series"><svg viewBox="0 0 24 24" class="nico"><path d="M3 7h18v11H3zM8 21h8M12 7l-4-4M12 7l4-4"/></svg>Serial TV</a>
+  <a id="navgenre" href="/genre"><svg viewBox="0 0 24 24" class="nico"><path d="M3 12l8-8h7v7l-8 8zM15 7h.01"/></svg>Genre</a>
+  <a id="navwatchlist" href="/watchlist"><svg viewBox="0 0 24 24" class="nico"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Watchlist</a>
+  <div class="search"><input id="q" type="text" placeholder="Cari..."></div>
+  <button id="langbtn" class="langbtn">EN</button>
+  <div id="wfAuthSlot"></div>
+</nav>
+
+<div class="homeview" id="homeview">
+  <section class="hero" id="hero"></section>
+  <div class="rows" id="rows"></div>
+</div>
+
+<div class="gridview" id="gridview">
+  <h2 id="gridtitle"></h2>
+  <div class="grid" id="grid"></div>
+  <div class="pager" id="pager"></div>
+</div>
+
+<div class="wf-overlay" id="authOverlay"><div class="wf-card" id="authCard"></div></div>
+
+<script>
+// ===== MOCK DATA =====
+const TMDB = 'https://image.tmdb.org/t/p';
+const MOCK_MOVIES = [
+  {slug:'dune-part-two',title:'Dune: Part Two',poster:'/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',backdrop:'/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',rating:8.3,year:'2024',runtime:166,genres:['Sci-Fi','Adventure'],quality:'HD',overview:'Paul Atreides unites with the Fremen while on a warpath of revenge against the conspirators who destroyed his family.'},
+  {slug:'oppenheimer',title:'Oppenheimer',poster:'/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',backdrop:'/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg',rating:8.1,year:'2023',runtime:181,genres:['Drama','History'],quality:'HD',overview:'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.'},
+  {slug:'the-batman',title:'The Batman',poster:'/74xTEgt7R36Fpooo50r9T25onhq.jpg',backdrop:'/b0PlHdEYJ7C1IuJOKzDPN4ReDCQ.jpg',rating:7.8,year:'2022',runtime:176,genres:['Crime','Mystery'],quality:'HD',overview:'When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate.'},
+  {slug:'spider-man-nwh',title:'Spider-Man: No Way Home',poster:'/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',backdrop:'/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg',rating:8.2,year:'2021',runtime:148,genres:['Action','Sci-Fi'],quality:'HD',overview:'With Spider-Man\'s identity now revealed, Peter asks Doctor Strange for help.'},
+  {slug:'everything-everywhere',title:'Everything Everywhere All at Once',poster:'/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg',backdrop:'/nW5fUbldp1DYf2uQ31a1dAH6yJk.jpg',rating:7.8,year:'2022',runtime:139,genres:['Action','Sci-Fi'],quality:'HD',overview:'An aging Chinese immigrant is swept up in an insane adventure.'},
+  {slug:'top-gun-maverick',title:'Top Gun: Maverick',poster:'/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',backdrop:'/odJ4hx6g6vBZGUVSIIUhLm9fvmL.jpg',rating:8.3,year:'2022',runtime:131,genres:['Action','Drama'],quality:'HD',overview:'After thirty years, Maverick is still pushing the envelope as a top naval aviator.'},
+  {slug:'john-wick-4',title:'John Wick: Chapter 4',poster:'/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',backdrop:'/h8gHn0OzAcU1rEJMh8CoMSJiIDL.jpg',rating:7.7,year:'2023',runtime:169,genres:['Action','Thriller'],quality:'HD',overview:'John Wick uncovers a path to defeating The High Table.'},
+  {slug:'gotg-vol-3',title:'Guardians of the Galaxy Vol. 3',poster:'/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg',backdrop:'/5YZbUmjbMaVClCoHT1HBBiOnOMK.jpg',rating:7.9,year:'2023',runtime:150,genres:['Action','Sci-Fi'],quality:'HD',overview:'Still reeling from the loss of Gamora, Peter Quill rallies his team to defend the universe.'},
+  {slug:'barbie',title:'Barbie',poster:'/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',backdrop:'/nHf61UzkfFno5X1ofIhugCPus2R.jpg',rating:7.0,year:'2023',runtime:114,genres:['Comedy','Fantasy'],quality:'HD',overview:'Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.'},
+  {slug:'poor-things',title:'Poor Things',poster:'/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg',backdrop:'/bQS43USAxH1U1k1GQPVa2j8MdFu.jpg',rating:7.9,year:'2023',runtime:141,genres:['Sci-Fi','Comedy'],quality:'HD',overview:'The incredible tale about the fantastical evolution of Bella Baxter.'},
+  {slug:'godzilla-minus-one',title:'Godzilla Minus One',poster:'/hkxxMIGaiCTmrEAr37nMo1Az0kk.jpg',backdrop:'/26mM5DCoE1pE0XHlLSJLE4lCOOV.jpg',rating:7.8,year:'2023',runtime:125,genres:['Action','Sci-Fi'],quality:'HD',overview:'Post war Japan is at its lowest point when a new crisis emerges in the form of a giant monster.'},
+  {slug:'killers-flower-moon',title:'Killers of the Flower Moon',poster:'/dB6Krk7YwPq6TZx9eoc9Lpc8oYj.jpg',backdrop:'/7d0nFaEONqE8xKs0KTHpGdOTUOx.jpg',rating:7.6,year:'2023',runtime:206,genres:['Crime','Drama'],quality:'HD',overview:'Members of the Osage tribe in the United States are murdered under mysterious circumstances.'},
+  {slug:'anatomy-of-a-fall',title:'Anatomy of a Fall',poster:'/kQs6R0KnXilMRgw1p1mMrPGNjVm.jpg',backdrop:'/2JGeJDmPnXnYaZ7GFcMi9E8R7fL.jpg',rating:7.7,year:'2023',runtime:152,genres:['Thriller','Drama'],quality:'HD',overview:'A woman is suspected of her husband\'s murder, and their blind son faces a moral dilemma.'},
+  {slug:'napoleon',title:'Napoleon',poster:'/vcZWJGvKZY01hn1KqobPzVHYJE.jpg',backdrop:'/AcqMFKwygo3MYCHR3EkrSdUMoH.jpg',rating:6.5,year:'2023',runtime:158,genres:['Drama','History'],quality:'CAM',overview:'An epic that details the checkered rise and fall of French Emperor Napoleon Bonaparte.'},
+  {slug:'wonka',title:'Wonka',poster:'/qhb1qOilXbMXe55c4Gwn1PGhfjN.jpg',backdrop:'/xMkqJXJExkxN9o1ZaHnLNHkIQGY.jpg',rating:7.1,year:'2023',runtime:116,genres:['Comedy','Fantasy'],quality:'HD',overview:'Based on the extraordinary character at the center of Charlie and the Chocolate Factory.'},
+  {slug:'the-dark-knight',title:'The Dark Knight',poster:'/qJ2tW6WMUDux911BTUgMe1nNaD.jpg',backdrop:'/nMKdUUepR0i5zn0y1T4CsSB5uco.jpg',rating:9.0,year:'2008',runtime:152,genres:['Action','Crime'],quality:'HD',overview:'When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest tests.'},
+  {slug:'interstellar',title:'Interstellar',poster:'/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',backdrop:'/xJHokMbljvjADYdit5fK1U7gO5.jpg',rating:8.7,year:'2014',runtime:169,genres:['Sci-Fi','Drama'],quality:'HD',overview:'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.'},
+  {slug:'inception',title:'Inception',poster:'/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',backdrop:'/8ZTVqvKDQ8emgcUE8spIQhekQno.jpg',rating:8.8,year:'2010',runtime:148,genres:['Action','Sci-Fi'],quality:'HD',overview:'A thief who steals corporate secrets through the use of dream-sharing technology.'},
+  {slug:'rebel-moon',title:'Rebel Moon: Part One',poster:'/ui4DrH1cKk2vjHi3lhKLWJ0GU1F.jpg',backdrop:'/sJByRJKxGMJ2CiJq4Jq7rMnGFpg.jpg',rating:5.6,year:'2023',runtime:134,genres:['Sci-Fi','Action'],quality:'HD',overview:'When a peaceful colony on the edge of a galaxy finds itself threatened by the armies of a tyrannical regent.'},
+  {slug:'aquaman-2',title:'Aquaman and the Lost Kingdom',poster:'/7lTnWXSqvc0Nhpm0Jx8PnCKLlmx.jpg',backdrop:'/hE9LUm0nNYxKqVB0MBI1HGZTfJu.jpg',rating:5.7,year:'2023',runtime:115,genres:['Action','Fantasy'],quality:'CAM',overview:'Black Manta seeks revenge on Aquaman for his father\'s death.'},
+  {slug:'anyone-but-you',title:'Anyone But You',poster:'/yRt7MGBHuAkRFU6JqCNdFsGMNIO.jpg',backdrop:'/laZlQsMG6K1qkLz7OqByFSr3NnN.jpg',rating:6.1,year:'2023',runtime:103,genres:['Romance','Comedy'],quality:'HD',overview:'After an amazing first date, Bea and Ben\'s fiery attraction turns ice cold.'},
+  {slug:'mean-girls',title:'Mean Girls',poster:'/fbbj3LDhA1F1HjClACWWnTb8Cas.jpg',backdrop:'/ovIbHoALGlMPCQVGrFMPqLj6KJk.jpg',rating:6.0,year:'2024',runtime:112,genres:['Comedy','Musical'],quality:'HD',overview:'New student Cady Heron is welcomed into the top of the social food chain.'},
+  {slug:'migration',title:'Migration',poster:'/ldfCFj7sRmpd2J7dLx1aORjQ7Ev.jpg',backdrop:'/aklz5SoFz89mJTMLgD6Oo9V0fWt.jpg',rating:6.7,year:'2023',runtime:91,genres:['Animation','Comedy'],quality:'HD',overview:'A family of ducks try to convince their overprotective father to go on the vacation of a lifetime.'},
+  {slug:'the-beekeeper',title:'The Beekeeper',poster:'/A7EByudX0eOzlkQ2FIbogzyazm2.jpg',backdrop:'/bWk2E7qjFNYpXqEMCUhjzOBzLMN.jpg',rating:6.4,year:'2024',runtime:105,genres:['Action','Thriller'],quality:'HD',overview:'One man\'s brutal campaign for vengeance takes on national stakes after he is revealed to be a former operative.'},
+  {slug:'argylle',title:'Argylle',poster:'/9r0u1bNi6SmS8FV3jDqLJ4Xkfxw.jpg',backdrop:'/sIhRWh2SlK6iMVa3mPLGkFxJEJR.jpg',rating:5.6,year:'2024',runtime:139,genres:['Action','Comedy'],quality:'CAM',overview:'A reclusive author who writes espionage novels about a secret agent.'},
+  {slug:'dune-part-one',title:'Dune',poster:'/d5NXSklXo0qyIYkgV94XAgMIckC.jpg',backdrop:'/jYEW5MxjBzMGqHdXEnKoWEKFSgE.jpg',rating:8.0,year:'2021',runtime:155,genres:['Sci-Fi','Adventure'],quality:'HD',overview:'Paul Atreides, a brilliant and gifted young man, must travel to the most dangerous planet in the universe.'},
+  {slug:'the-holdovers',title:'The Holdovers',poster:'/gMJngFz9ePMH4djjVzNAmLSnMH.jpg',backdrop:'/cqfJmJPIGfgVTyNjP3DGe0PRrYf.jpg',rating:7.9,year:'2023',runtime:133,genres:['Drama','Comedy'],quality:'HD',overview:'A curmudgeonly instructor at a New England prep school is forced to remain on campus during Christmas break.'},
+  {slug:'past-lives',title:'Past Lives',poster:'/k3waqVXzLk9uGNEa4hGJqfhKR2Z.jpg',backdrop:'/5uJMLsMjS0EBN3r2g1eCOkGj4Jj.jpg',rating:7.8,year:'2023',runtime:106,genres:['Romance','Drama'],quality:'HD',overview:'Two deeply connected childhood friends are separated after Nora\'s family emigrates from South Korea.'},
+  {slug:'zone-of-interest',title:'The Zone of Interest',poster:'/hUu9pFq3JsqMIjP3wTLqaMVnLjW.jpg',backdrop:'/3qGhJqJQpxLj8HqHnFdCbPKVFmn.jpg',rating:7.4,year:'2023',runtime:105,genres:['Drama','War'],quality:'HD',overview:'The commandant of Auschwitz, Rudolf Höss, and his wife Hedwig, strive to build a dream life.'},
+  {slug:'society-of-snow',title:'Society of the Snow',poster:'/tUHsHFr5YMYHPlwKVi5vJNR1BPa.jpg',backdrop:'/c9oKIPqBLcYpZBQQ6KqkAqMEn4z.jpg',rating:7.8,year:'2024',runtime:144,genres:['Drama','Thriller'],quality:'HD',overview:'The story of the 1972 Andes flight disaster.'}
+];
+
+const MOCK_SERIES = [
+  {slug:'shogun',title:'Shōgun',poster:'/7O4iVfOMQmdCSxhOg1WnzG1AgmT.jpg',backdrop:'/A6tMQiE6bhXKR5FX1lbJm3MsOD.jpg',rating:8.6,year:'2024',genres:['Drama','War'],quality:'HD',overview:'Set in 1600 Japan, Lord Yoshii Toranaga is fighting for his life as his enemies on the Council of Regents unite against him.'},
+  {slug:'fallout',title:'Fallout',poster:'/AnsSKR9LuK0QrFzLnKN0nUNhkPf.jpg',backdrop:'/2E1K8B5XpJ1G1Oyrj1YtLfP2Rxl.jpg',rating:8.0,year:'2024',genres:['Sci-Fi','Action'],quality:'HD',overview:'In a future, post-apocalyptic Los Angeles, the inhabitants of luxury fallout shelters are forced to return to the irradiated hellscape.'},
+  {slug:'three-body-problem',title:'3 Body Problem',poster:'/sg4xJGSf7M3mJG3MHVdJfiEjKpL.jpg',backdrop:'/iBkS0FOlJkRjEhjb5ZmE1gZTRVM.jpg',rating:6.5,year:'2024',genres:['Sci-Fi','Drama'],quality:'HD',overview:'A fateful decision made in 1960s China echoes across space and time into the present day.'},
+  {slug:'baby-reindeer',title:'Baby Reindeer',poster:'/tZjNk5UjKLjBlGMN1rqeYKCk5nE.jpg',backdrop:'/n7ZvLGCwQQFvNDBJy6PvdDNJR0R.jpg',rating:7.8,year:'2024',genres:['Drama','Thriller'],quality:'HD',overview:'A struggling comedian\'s life is upended when a woman he showed kindness to becomes obsessively fixated on him.'},
+  {slug:'the-bear',title:'The Bear',poster:'/sHFlnJEMVoSUhCT9DtDZxkzJvxT.jpg',backdrop:'/f5ZIuQo3mZ5LKpYJCBhPCLp3bBj.jpg',rating:8.6,year:'2022',genres:['Drama','Comedy'],quality:'HD',overview:'A young chef from the fine dining world returns to Chicago to run his family\'s sandwich shop.'},
+  {slug:'severance',title:'Severance',poster:'/lFfI6iJigDh4dBwJ6OKz83OkUVw.jpg',backdrop:'/kR8M0mN4bE5P5qN8CkPqGqW7T0r.jpg',rating:8.4,year:'2022',genres:['Sci-Fi','Thriller'],quality:'HD',overview:'Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.'},
+  {slug:'house-dragon',title:'House of the Dragon',poster:'/t9XkeE7HzOsdQcDDDapDYh8Rrmt.jpg',backdrop:'/2M2JgRb8E9mK0FnOkSiKsb7KX3V.jpg',rating:8.4,year:'2022',genres:['Drama','Fantasy'],quality:'HD',overview:'The Targaryen civil war, known as the Dance of the Dragons, tears their dynasty apart.'},
+  {slug:'last-of-us',title:'The Last of Us',poster:'/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',backdrop:'/5WfvU8Gj83LYpU2ZxF3f3JqL8n1.jpg',rating:8.8,year:'2023',genres:['Drama','Sci-Fi'],quality:'HD',overview:'Joel and Ellie navigate a post-apocalyptic America overrun by deadly infected and ruthless survivors.'},
+  {slug:'wednesday',title:'Wednesday',poster:'/9PFonBhy4cQy7Jz20NpMygczyXY.jpg',backdrop:'/iHSwv7FgkFhGEjK4m3J4OGj9vH3.jpg',rating:8.1,year:'2022',genres:['Comedy','Fantasy'],quality:'HD',overview:'Wednesday Addams investigates a murder spree while making new friends at Nevermore Academy.'},
+  {slug:'stranger-things',title:'Stranger Things',poster:'/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',backdrop:'/56v2KjBlYj3Ey72rMgGFJJ5z7.jpg',rating:8.7,year:'2016',genres:['Sci-Fi','Horror'],quality:'HD',overview:'When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces.'},
+  {slug:'squid-game',title:'Squid Game',poster:'/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg',backdrop:'/qw3J9cNeLioOLoR68WX7z79aCdK.jpg',rating:7.8,year:'2021',genres:['Drama','Thriller'],quality:'HD',overview:'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games.'},
+  {slug:'bridgerton',title:'Bridgerton',poster:'/k3fJnJpB6sM1KP6G1bFXB1bnlKK.jpg',backdrop:'/k3fJnJpB6sM1KP6G1bFXB1bnlKK.jpg',rating:7.3,year:'2020',genres:['Romance','Drama'],quality:'HD',overview:'The eight close-knit siblings of the Bridgerton family look for love and happiness in London high society.'},
+  {slug:'the-witcher',title:'The Witcher',poster:'/7vjaCdMw15FEbXyLQTVa04URsPm.jpg',backdrop:'/jBJWaqoSCiARWtfV0GlqHrcdiJq.jpg',rating:8.0,year:'2019',genres:['Fantasy','Drama'],quality:'HD',overview:'Geralt of Rivia, a solitary monster hunter, struggles to find his place in a world.'},
+  {slug:'andor',title:'Andor',poster:'/59SVcd3N12OdH7oUlMdTTi7WEBu.jpg',backdrop:'/59SVcd3N12OdH7oUlMdTTi7WEBu.jpg',rating:8.4,year:'2022',genres:['Sci-Fi','Action'],quality:'HD',overview:'The story of Cassian Andor\'s journey to discover the difference he can make.'},
+  {slug:'reacher',title:'Reacher',poster:'/bGksauHdXPaA5PhOkaaHPn1vJjT.jpg',backdrop:'/bGksauHdXPaA5PhOkaaHPn1vJjT.jpg',rating:8.1,year:'2022',genres:['Action','Crime'],quality:'HD',overview:'Jack Reacher, a veteran military investigator, investigates a conspiracy.'},
+  {slug:'invincible',title:'Invincible',poster:'/dMOyFzVsPdN1NpaFy4Pxh0GFzGr.jpg',backdrop:'/dMOyFzVsPdN1NpaFy4Pxh0GFzGr.jpg',rating:8.7,year:'2021',genres:['Animation','Action'],quality:'HD',overview:'An adult animated series about Mark Grayson, a teenager whose father is the most powerful superhero on the planet.'},
+  {slug:'arcane',title:'Arcane',poster:'/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',backdrop:'/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',rating:9.0,year:'2021',genres:['Animation','Action'],quality:'HD',overview:'Set in Riot\'s utopian region of Piltover and the oppressed underground of Zaun.'},
+  {slug:'blue-eye-samurai',title:'Blue Eye Samurai',poster:'/3K2JJxEFO6jThHvEi1XKmHsNrdM.jpg',backdrop:'/3K2JJxEFO6jThHvEi1XKmHsNrdM.jpg',rating:8.7,year:'2023',genres:['Animation','Action'],quality:'HD',overview:'In Edo-period Japan, a mixed-race sword master seeks revenge against those who wronged her.'},
+  {slug:'slow-horses',title:'Slow Horses',poster:'/dje4PzFBdmLD7DNKRHo1KbJDmc.jpg',backdrop:'/dje4PzFBdmLD7DNKRHo1KbJDmc.jpg',rating:8.1,year:'2022',genres:['Drama','Thriller'],quality:'HD',overview:'A dysfunctional team of MI5 agents—who have been banished to Slough House—navigate dark espionage.'},
+  {slug:'rings-power',title:'The Rings of Power',poster:'/mYLObQBMFe1M0mPMGVw5M0CblYD.jpg',backdrop:'/mYLObQBMFe1M0mPMGVw5M0CblYD.jpg',rating:7.0,year:'2022',genres:['Fantasy','Drama'],quality:'HD',overview:'Epic drama set thousands of years before the events of J.R.R. Tolkien\'s The Hobbit and The Lord of the Rings.'}
+];
+
+const GENRES = ['Action','Comedy','Drama','Sci-Fi','Horror','Romance','Thriller','Animation','Fantasy','Crime','Mystery','Adventure','War','History','Documentary'];
+const YEARS = ['2024','2023','2022','2021','2020','2019','2016','2014','2010','2008'];
+const COUNTRIES = [{slug:'us',name:'United States'},{slug:'kr',name:'South Korea'},{slug:'jp',name:'Japan'},{slug:'gb',name:'United Kingdom'},{slug:'cn',name:'China'},{slug:'fr',name:'France'},{slug:'de',name:'Germany'},{slug:'in',name:'India'},{slug:'br',name:'Brazil'},{slug:'id',name:'Indonesia'}];
+
+// ===== I18N =====
+const I18N={id:{nav_home:'Beranda',nav_movies:'Film',nav_series:'Serial TV',nav_genre:'Genre',nav_watchlist:'Watchlist',search_ph:'Cari...',row_continue:'Lanjut Nonton',row_popular:'Populer Sekarang',row_latest:'Terbaru Ditambahkan',play:'Tonton',search_result:'Hasil pencarian',no_result:'Tidak ada hasil.',loading:'Memuat…',load_fail:'Gagal memuat.',sort_popular:'Populer',sort_latest:'Ditambahkan',sort_release:'Rilis Terbaru',sort_rating:'Rating',watchlist_empty:'Belum ada film atau serial yang kamu simpan.',watchlist_empty_title:'Watchlist kamu kosong',watchlist_empty_cta:'Jelajahi Film',f_all_genre:'Semua Genre',f_all_year:'Semua Tahun',badge_series:'Serial TV',badge_movie:'Film',hero_new:'Baru Rilis',top_today:'Trending',cw_left:'tersisa',cw_remove:'Hapus',m_login:'Masuk',m_login_sub:'Selamat datang kembali di Webflix.',m_id_label:'Username atau Email',m_pass:'Password',m_no_acc:'Belum punya akun?',m_register:'Daftar',m_register_sub:'Gabung Webflix, gratis selamanya.',m_username:'Username',m_email:'Email',m_have_acc:'Sudah punya akun?',m_pass_confirm:'Konfirmasi Password',m_logout:'Keluar',m_profile:'Profil Saya',no_titles:'Tidak ada judul.'},
+en:{nav_home:'Home',nav_movies:'Movies',nav_series:'TV Series',nav_genre:'Genres',nav_watchlist:'Watchlist',search_ph:'Search...',row_continue:'Continue Watching',row_popular:'Popular Now',row_latest:'Recently Added',play:'Watch',search_result:'Search results',no_result:'No results.',loading:'Loading…',load_fail:'Failed to load.',sort_popular:'Popular',sort_latest:'Added',sort_release:'Latest Release',sort_rating:'Rating',watchlist_empty:'You haven\'t saved any movies or series yet.',watchlist_empty_title:'Your watchlist is empty',watchlist_empty_cta:'Browse Movies',f_all_genre:'All Genres',f_all_year:'All Years',badge_series:'TV Series',badge_movie:'Movie',hero_new:'Just Added',top_today:'Trending',cw_left:'left',cw_remove:'Remove',m_login:'Log In',m_login_sub:'Welcome back to Webflix.',m_id_label:'Username or Email',m_pass:'Password',m_no_acc:"Don't have an account?",m_register:'Sign Up',m_register_sub:'Join Webflix, free forever.',m_username:'Username',m_email:'Email',m_have_acc:'Already have an account?',m_pass_confirm:'Confirm Password',m_logout:'Log Out',m_profile:'My Profile',no_titles:'No titles.'}};
+function getLang(){return localStorage.getItem('wf_lang')||'id'}
+function setLang(l){localStorage.setItem('wf_lang',l)}
+function t(k){const d=I18N[getLang()]||I18N.id;return d[k]!=null?d[k]:k}
+
+// ===== HELPERS =====
+const loadbar=document.getElementById('loadbar');
+function bar(p){loadbar.style.width=p+'%';if(p>=100)setTimeout(()=>loadbar.style.width=0,300)}
+function poster(p,sz){return p?(p.startsWith('http')?p:TMDB+(sz||'/w342')+p):''}
+function yr(d){return(d||'').slice(0,4)}
+function fmtDur(m){m=Number(m)||0;if(!m)return'';const h=Math.floor(m/60),mm=m%60;return(h?h+'h':'')+(h&&mm?' ':'')+(mm?mm+'m':'')}
+function esc(s){return(s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+// ===== CONTINUE WATCHING (localStorage) =====
+function cwList(){try{return(JSON.parse(localStorage.getItem('wf_cw')||'[]')).filter(x=>x&&x.slug)}catch(e){return[]}}
+function cwRemove(slug){localStorage.setItem('wf_cw',JSON.stringify(cwList().filter(x=>x.slug!==slug)))}
+function cwAdd(item){const l=cwList().filter(x=>x.slug!==item.slug);l.unshift(item);if(l.length>20)l.pop();localStorage.setItem('wf_cw',JSON.stringify(l))}
+
+// ===== WATCHLIST (localStorage) =====
+function wlList(){try{return(JSON.parse(localStorage.getItem('wf_wl')||'[]')).filter(x=>x&&x.slug)}catch(e){return[]}}
+function wlToggle(item){let l=wlList();const i=l.findIndex(x=>x.slug===item.slug);if(i>=0)l.splice(i,1);else l.push(item);localStorage.setItem('wf_wl',JSON.stringify(l));return i<0}
+function wlHas(slug){return wlList().some(x=>x.slug===slug)}
+
+// ===== MEMBER (localStorage) =====
+function getUser(){try{return JSON.parse(localStorage.getItem('wf_user'))}catch(e){return null}}
+function setUser(u){localStorage.setItem('wf_user',JSON.stringify(u));renderAuthSlot()}
+function logout(){localStorage.removeItem('wf_user');renderAuthSlot()}
+
+// ===== NAV =====
+const hdr=document.getElementById('hdr');
+window.addEventListener('scroll',()=>hdr.classList.toggle('solid',scrollY>40));
+document.getElementById('navToggle').onclick=()=>hdr.classList.toggle('open');
+hdr.querySelectorAll('a:not(.brand)').forEach(a=>a.addEventListener('click',()=>hdr.classList.remove('open')));
+
+// ===== AUTH SLOT =====
+function renderAuthSlot(){
+  const slot=document.getElementById('wfAuthSlot');
+  const u=getUser();
+  if(u){
+    const hex=u.color||'#e50914';
+    slot.innerHTML=`<div class="wf-userwrap"><div class="wf-uchip" id="uchip"><div class="wf-av" style="background:${hex}">${(u.username||'?')[0].toUpperCase()}</div><span class="wf-uname">${esc(u.username)}</span></div><div class="wf-menu" id="wfMenu"><div class="mi" onclick="location='/profile'">👤 ${t('m_profile')}</div><div class="mi" onclick="location='/watchlist'">🔖 ${t('nav_watchlist')}</div><div class="sep"></div><div class="mi" onclick="logout()">🚪 ${t('m_logout')}</div></div></div>`;
+    document.getElementById('uchip').onclick=()=>document.getElementById('wfMenu').classList.toggle('open');
+    document.addEventListener('click',e=>{const m=document.getElementById('wfMenu');if(m&&!e.target.closest('.wf-userwrap'))m.classList.remove('open')});
+  }else{
+    slot.innerHTML=`<button class="wf-authbtn" id="authBtn">${t('m_login')}</button>`;
+    document.getElementById('authBtn').onclick=()=>openAuth('login');
+  }
+}
+
+// ===== AUTH MODAL =====
+const overlay=document.getElementById('authOverlay');
+const authCard=document.getElementById('authCard');
+function openAuth(mode){
+  overlay.classList.add('open');
+  if(mode==='login'){
+    authCard.innerHTML=`<span class="wf-x" onclick="closeAuth()">&times;</span><h3>${t('m_login')}</h3><p class="sub">${t('m_login_sub')}</p><div class="wf-field"><label>${t('m_id_label')}</label><input id="wfId" autocomplete="username"></div><div class="wf-field"><label>${t('m_pass')}</label><div class="wf-pw-wrap"><input id="wfPass" type="password" autocomplete="current-password"><span class="wf-eye" onclick="togglePw(this)">👁</span></div></div><div class="wf-err" id="wfErr"></div><button class="wf-submit" onclick="doLogin()">${t('m_login')}</button><div class="wf-switch">${t('m_no_acc')} <a onclick="openAuth('register')">${t('m_register')}</a></div>`;
+  }else{
+    authCard.innerHTML=`<span class="wf-x" onclick="closeAuth()">&times;</span><h3>${t('m_register')}</h3><p class="sub">${t('m_register_sub')}</p><div class="wf-field"><label>${t('m_username')}</label><input id="wfUser"></div><div class="wf-field"><label>${t('m_email')}</label><input id="wfEmail" type="email"></div><div class="wf-field"><label>${t('m_pass')}</label><div class="wf-pw-wrap"><input id="wfPass" type="password"><span class="wf-eye" onclick="togglePw(this)">👁</span></div></div><div class="wf-field"><label>${t('m_pass_confirm')}</label><div class="wf-pw-wrap"><input id="wfPass2" type="password"><span class="wf-eye" onclick="togglePw(this)">👁</span></div></div><div class="wf-err" id="wfErr"></div><button class="wf-submit" onclick="doRegister()">${t('m_register')}</button><div class="wf-switch">${t('m_have_acc')} <a onclick="openAuth('login')">${t('m_login')}</a></div>`;
+  }
+}
+function closeAuth(){overlay.classList.remove('open')}
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeAuth()});
+function togglePw(el){const i=el.previousElementSibling;i.type=i.type==='password'?'text':'password';el.classList.toggle('on')}
+function doLogin(){
+  const id=document.getElementById('wfId').value.trim();
+  const pw=document.getElementById('wfPass').value;
+  const err=document.getElementById('wfErr');
+  if(!id||!pw){err.textContent='Isi semua field.';return}
+  const users=JSON.parse(localStorage.getItem('wf_users')||'{}');
+  const u=users[id.toLowerCase()];
+  if(!u||u.pw!==pw){err.textContent='Username atau password salah.';return}
+  setUser(u);closeAuth();renderAuthSlot();
+}
+function doRegister(){
+  const user=document.getElementById('wfUser').value.trim();
+  const email=document.getElementById('wfEmail').value.trim();
+  const pw=document.getElementById('wfPass').value;
+  const pw2=document.getElementById('wfPass2').value;
+  const err=document.getElementById('wfErr');
+  if(!user||!email||!pw){err.textContent='Isi semua field.';return}
+  if(pw!==pw2){err.textContent=t('m_pass_mismatch')||'Password tidak cocok.';return}
+  const users=JSON.parse(localStorage.getItem('wf_users')||'{}');
+  if(users[user.toLowerCase()]){err.textContent='Username sudah dipakai.';return}
+  const u={username:user,email:pw,color:'#e50914',created:Date.now()};
+  users[user.toLowerCase()]={...u,pw};
+  localStorage.setItem('wf_users',JSON.stringify(users));
+  setUser(u);closeAuth();renderAuthSlot();
+}
+renderAuthSlot();
+
+// ===== LANGUAGE =====
+const langbtn=document.getElementById('langbtn');
+langbtn.textContent=getLang()==='id'?'EN':'ID';
+langbtn.onclick=()=>{setLang(getLang()==='id'?'en':'id');location.reload()};
+
+// ===== TILE RENDERER =====
+function tile(m,isSeries){
+  isSeries=isSeries||(m.contentType==='series');
+  const a=document.createElement('a');a.className='tile';
+  const p=poster(m.posterPath||m.poster);
+  const bg=p?`<img loading="lazy" src="${p}" onerror="this.style.opacity=.15">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:grid;place-items:center;font-size:11px;color:#666;padding:8px;text-align:center">${esc(m.title||'')}</div>`;
+  const rt=m.voteAverage?Number(m.voteAverage).toFixed(1):m.rating?Number(m.rating).toFixed(1):'';
+  const ty=yr(m.releaseDate||m.year||'');
+  a.innerHTML=`<div class="poster">${bg}${m.quality?`<span class="q">${m.quality}</span>`:''}${rt?`<span class="rt">★ ${rt}</span>`:''}</div><h3>${esc(m.title||'')}${ty?` <span class="yr">(${ty})</span>`:''}</h3>`;
+  a.onclick=e=>{e.preventDefault();showDetail(m,isSeries)};
+  return a;
+}
+
+function continueTile(m){
+  const isSeries=m.kind==='series';
+  const a=document.createElement('a');a.className='cw-tile';a.href='#';
+  const bg=poster(m.backdrop,'/w780')||poster(m.poster,'/w500');
+  const seBadge=isSeries&&m.season&&m.episode?`S${String(m.season).padStart(2,'0')}E${String(m.episode).padStart(2,'0')}`:(isSeries?t('badge_series'):t('badge_movie'));
+  const pct=(m.dur&&m.t)?Math.min(99,Math.round(m.t/m.dur*100)):35;
+  a.innerHTML=`<div class="cw-thumb"><img loading="lazy" src="${bg}" onerror="this.style.opacity=.15"><span class="cw-se">${seBadge}</span><button class="cw-x" title="${t('cw_remove')}">×</button><div class="cw-play">▶</div><div class="cw-bar"><span style="width:${pct}%"></span></div></div><h3>${esc(m.title||'')}${m.year?` <span class="yr">(${m.year})</span>`:''}</h3>`;
+  a.querySelector('.cw-x').onclick=e=>{e.preventDefault();e.stopPropagation();cwRemove(m.slug);a.remove()};
+  a.onclick=e=>{e.preventDefault();const src=(isSeries?MOCK_SERIES:MOCK_MOVIES).find(x=>x.slug===m.slug);if(src)showDetail(src,isSeries)};
+  return a;
+}
+
+// ===== DRAG SCROLL =====
+function enableDragScroll(el){
+  if(!el||el._dragHooked)return;el._dragHooked=true;
+  let down=false,startX=0,startScroll=0,moved=0;
+  el.addEventListener('mousedown',e=>{down=true;moved=0;startX=e.pageX;startScroll=el.scrollLeft});
+  el.addEventListener('mousemove',e=>{if(!down)return;const dx=e.pageX-startX;if(Math.abs(dx)>4){el.classList.add('drag');moved=Math.abs(dx)}el.scrollLeft=startScroll-dx});
+  const end=()=>{down=false;setTimeout(()=>el.classList.remove('drag'),0)};
+  el.addEventListener('mouseup',end);el.addEventListener('mouseleave',end);
+  el.addEventListener('click',e=>{if(moved>4){e.preventDefault();e.stopPropagation()}},true);
+}
+
+// ===== HERO SLIDESHOW =====
+let _heroTimer=null;
+function renderHero(items,heroEl,mode){
+  const h=heroEl||document.getElementById('hero');
+  const slides=(items||[]).slice(0,8);
+  if(!slides.length)return;
+  if(_heroTimer){clearInterval(_heroTimer);_heroTimer=null}
+  const HERO_MS=8000;
+  h.innerHTML=slides.map((m,i)=>{
+    const bg=poster(m.backdropPath||m.backdrop,'/original')||poster(m.posterPath||m.poster,'/w780');
+    const bgStyle=bg?`background-image:url('${bg}')`:`background:linear-gradient(135deg,#1a1a2e,#0f3460,#16213e)`;
+    const isSeries=m.contentType==='series';
+    const rt=m.voteAverage?Number(m.voteAverage).toFixed(1):m.rating?Number(m.rating).toFixed(1):'';
+    const genres=(m.genres||[]).slice(0,3).map(g=>typeof g==='string'?g:g.name).join(', ');
+    return`<div class="hero-slide${i===0?' active':''}" data-i="${i}"><div class="hero-bg" style="${bgStyle}"></div><div class="hero-content"><div class="hero-badges"><span class="hero-rank">${mode==='latest'?t('hero_new'):('#'+(i+1)+' '+t('top_today'))}</span><span class="hero-type">${isSeries?t('badge_series'):t('badge_movie')}</span></div><h1>${esc(m.title||'')}</h1><div class="hero-meta">${rt?`<span class="r">★ ${rt}</span>`:''}<span>${yr(m.releaseDate||m.year||'')}</span>${m.runtime?`<span>${fmtDur(m.runtime)}</span>`:''}${genres?`<span>${esc(genres)}</span>`:''}</div><p>${esc(m.overview||'')}</p><a class="btn-play" href="#" onclick="event.preventDefault();showDetail(MOCK_MOVIES[${i}]||MOCK_SERIES[${i}],${isSeries})">▶ ${t('play')}</a></div></div>`;
+  }).join('')+`<div class="hero-dots">${slides.map((_,i)=>`<button class="hero-dot${i===0?' active':''}" data-i="${i}"><span class="hero-dot-fill"></span></button>`).join('')}</div>`;
+  let cur=0;const slideEls=h.querySelectorAll('.hero-slide'),dotEls=h.querySelectorAll('.hero-dot');
+  function animProg(){dotEls.forEach(d=>{const f=d.querySelector('.hero-dot-fill');if(f){f.style.transition='none';f.style.width='0%'}});const af=dotEls[cur]?.querySelector('.hero-dot-fill');if(!af)return;void af.offsetWidth;af.style.transition='width '+HERO_MS+'ms linear';af.style.width='100%'}
+  function show(n){const prev=cur;cur=(n+slideEls.length)%slideEls.length;slideEls.forEach((el,i)=>{el.classList.remove('prev');if(i===prev&&prev!==cur)el.classList.add('prev');el.classList.toggle('active',i===cur)});dotEls.forEach((el,i)=>el.classList.toggle('active',i===cur));if(prev!==cur&&slideEls[prev])setTimeout(()=>{if(!slideEls[prev].classList.contains('active'))slideEls[prev].classList.remove('prev')},650)}
+  function restart(){if(_heroTimer)clearInterval(_heroTimer);animProg();_heroTimer=setInterval(()=>{show(cur+1);animProg()},HERO_MS)}
+  dotEls.forEach(d=>d.onclick=()=>{show(+d.dataset.i);restart()});
+  let dragX=null,dragging=false;
+  h.addEventListener('touchstart',e=>{dragX=e.touches[0].clientX;dragging=true},{passive:true});
+  h.addEventListener('touchend',e=>{if(!dragging)return;const dx=e.changedTouches[0].clientX-dragX;dragging=false;if(Math.abs(dx)>45)show(cur+(dx<0?1:-1));restart()},{passive:true});
+  restart();
+}
+
+// ===== ROWS =====
+const ROWS_MOVIES=[
+  {key:'row_popular',q:'popular'},{key:'row_latest',q:'latest'},
+  {title:'Action',filter:'Action'},{title:'Horror',filter:'Horror'},{title:'Comedy',filter:'Comedy'},{title:'Drama',filter:'Drama'},{title:'Animation',filter:'Animation'},{title:'Sci-Fi',filter:'Sci-Fi'}
+];
+const ROWS_SERIES=[
+  {key:'row_popular',q:'popular'},{key:'row_latest',q:'latest'},
+  {title:'Drama',filter:'Drama'},{title:'Comedy',filter:'Comedy'},{title:'Action',filter:'Action'},{title:'Sci-Fi',filter:'Sci-Fi'},{title:'Animation',filter:'Animation'},{title:'Fantasy',filter:'Fantasy'}
+];
+
+function mockBrowse(kindDef,filter,page){
+  const data=kindDef==='series'?MOCK_SERIES:MOCK_MOVIES;
+  let items=[...data];
+  if(filter==='popular')items.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(filter==='latest')items.sort((a,b)=>(b.year||'').localeCompare(a.year||''));
+  else if(filter&&GENRES.includes(filter))items=items.filter(m=>(m.genres||[]).some(g=>g.toLowerCase().includes(filter.toLowerCase())));
+  const perPage=18;const start=((page||1)-1)*perPage;
+  return{data:items.slice(start,start+perPage),pagination:{page:page||1,totalPages:Math.ceil(items.length/perPage)}};
+}
+
+function rowSkeleton(title){
+  const sec=document.createElement('div');sec.className='row';
+  let sk='';for(let i=0;i<7;i++)sk+='<div class="tile-sk"><div class="poster"></div></div>';
+  sec.innerHTML=`<h2>${title}</h2><div class="row-scroll">${sk}</div>`;
+  return sec;
+}
+
+async function renderHome(){
+  homeview.classList.remove('hide');gridview.classList.remove('show');
+  hero.innerHTML='';rows.innerHTML='';bar(20);
+  // Continue watching
+  const cw=cwList();
+  if(cw.length){
+    const sec=document.createElement('div');sec.className='row';sec.id='cwRow';
+    sec.innerHTML=`<h2>${t('row_continue')}</h2><div class="row-scroll"></div>`;
+    const scroll=sec.querySelector('.row-scroll');cw.forEach(m=>scroll.appendChild(continueTile(m)));
+    enableDragScroll(scroll);rows.appendChild(sec);
+  }
+  // Hero with latest
+  renderHero(MOCK_MOVIES.slice(0,8).sort((a,b)=>(b.year||'').localeCompare(a.year||'')),null,'latest');
+  bar(40);
+  // Rows
+  const defs=kind==='series'?ROWS_SERIES:ROWS_MOVIES;
+  const secs=defs.map(d=>{const s=rowSkeleton(d.key?t(d.key):d.title);rows.appendChild(s);return s});
+  for(let i=0;i<defs.length;i++){
+    const d=defs[i];
+    const res=mockBrowse(kind,d.q||d.filter,1);
+    const scroll=secs[i].querySelector('.row-scroll');scroll.innerHTML='';
+    const isSeries=kind==='series';
+    res.data.forEach(m=>scroll.appendChild(tile(m,isSeries)));
+    enableDragScroll(scroll);
+    if(!res.data.length)secs[i].remove();
+    bar(40+(i+1)/defs.length*55);
+  }
+  bar(100);
+}
+
+// ===== GRID VIEW =====
+let curKind='movies';
+function renderGrid(items,title,isSeries){
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent=title;grid.innerHTML='';
+  items.forEach(m=>grid.appendChild(tile(m,isSeries)));
+  if(!items.length)grid.innerHTML=`<p style="color:#9a9aa5">${t('no_result')}</p>`;
+  bar(100);scrollTo(0,0);
+}
+
+function renderBrowse(filter,title,page,isSeries){
+  curBrowse={filter,title,page:1,totalPages:1,loading:false};
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent=title;grid.innerHTML='';
+  // Sort pills
+  const oldP=document.getElementById('sortPills');if(oldP)oldP.remove();
+  const bar2=document.createElement('div');bar2.id='sortPills';bar2.className='sort-pills';
+  [{key:'popular',label:'sort_popular'},{key:'latest',label:'sort_latest'},{key:'rating',label:'sort_rating'}].forEach(o=>{
+    const b=document.createElement('button');b.className='sort-pill'+(o.key===(filter||'popular')?' act':'');b.textContent=t(o.label);b.onclick=()=>renderBrowse(o.key,title,1,isSeries);bar2.appendChild(b);
+  });
+  gridtitle.insertAdjacentElement('afterend',bar2);
+  // Skeleton
+  for(let i=0;i<12;i++){const sk=document.createElement('div');sk.className='tile-sk';sk.innerHTML='<div class="poster"></div>';grid.appendChild(sk)}
+  bar(30);
+  const data=isSeries?MOCK_SERIES:MOCK_MOVIES;
+  let items=[...data];
+  if(filter==='popular')items.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(filter==='latest')items.sort((a,b)=>(b.year||'').localeCompare(a.year||''));
+  else if(filter==='rating')items.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  grid.innerHTML='';
+  items.forEach(m=>grid.appendChild(tile(m,isSeries)));
+  if(!items.length)grid.innerHTML=`<p style="color:#9a9aa5">${t('no_titles')}</p>`;
+  bar(100);scrollTo(0,0);
+}
+
+// ===== GENRE INDEX =====
+function renderGenreIndex(){
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent=t('nav_genre');grid.innerHTML='';grid.classList.add('genre-cards');
+  const allItems=[...MOCK_MOVIES,...MOCK_SERIES];
+  GENRES.forEach(g=>{
+    const count=allItems.filter(m=>(m.genres||[]).some(gg=>gg.toLowerCase().includes(g.toLowerCase()))).length;
+    const a=document.createElement('a');a.className='genre-card';
+    a.innerHTML=`<span>${g}</span><b>${count} titles</b>`;
+    a.onclick=e=>{e.preventDefault();const items=allItems.filter(m=>(m.genres||[]).some(gg=>gg.toLowerCase().includes(g.toLowerCase())));grid.classList.remove('genre-cards');renderGrid(items,`Genre: ${g}`,false)};
+    grid.appendChild(a);
+  });
+  bar(100);scrollTo(0,0);
+}
+
+// ===== SEARCH =====
+let searchTimer=null;
+function renderSearch(query){
+  const allItems=[...MOCK_MOVIES,...MOCK_SERIES];
+  const q=query.toLowerCase();
+  const items=allItems.filter(m=>(m.title||'').toLowerCase().includes(q)||(m.overview||'').toLowerCase().includes(q));
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent=`${t('search_result')}: "${query}"`;grid.innerHTML='';grid.classList.remove('genre-cards');
+  items.forEach(m=>{
+    const isSeries=MOCK_SERIES.some(s=>s.slug===m.slug);
+    grid.appendChild(tile(m,isSeries));
+  });
+  if(!items.length)grid.innerHTML=`<p style="color:#9a9aa5">${t('no_result')}</p>`;
+  bar(100);scrollTo(0,0);
+}
+
+// ===== WATCHLIST VIEW =====
+function renderWatchlist(){
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent=t('nav_watchlist');grid.innerHTML='';grid.classList.remove('genre-cards');
+  const list=wlList();
+  if(!list.length){
+    grid.classList.add('grid-empty');
+    grid.innerHTML=`<div class="wf-empty"><h3>${t('watchlist_empty_title')}</h3><p>${t('watchlist_empty')}</p><a href="/" class="wf-empty-cta" onclick="event.preventDefault();renderHome()">${t('watchlist_empty_cta')}</a></div>`;
+    bar(100);return;
+  }
+  grid.classList.remove('grid-empty');
+  list.forEach(m=>{
+    const isSeries=m.kind==='series';
+    const src=(isSeries?MOCK_SERIES:MOCK_MOVIES).find(x=>x.slug===m.slug)||m;
+    grid.appendChild(tile({...src,posterPath:src.posterPath||src.poster},isSeries));
+  });
+  bar(100);scrollTo(0,0);
+}
+
+// ===== DETAIL PAGE (modal overlay) =====
+function showDetail(m,isSeries){
+  const overlay2=document.createElement('div');overlay2.className='wf-overlay open';overlay2.style.zIndex='300';
+  const bg=poster(m.backdropPath||m.backdrop,'/original')||poster(m.posterPath||m.poster,'/w780');
+  const p=poster(m.posterPath||m.poster,'/w342');
+  const rt=m.voteAverage?Number(m.voteAverage).toFixed(1):m.rating?Number(m.rating).toFixed(1):'';
+  const genres=(m.genres||[]).map(g=>typeof g==='string'?g:g.name).join(', ');
+  const inWl=wlHas(m.slug);
+  overlay2.innerHTML=`<div style="width:100%;max-width:900px;max-height:90vh;overflow-y:auto;background:#16161d;border-radius:18px;border:1px solid #ffffff1f;box-shadow:0 24px 60px #000c">
+    <div style="position:relative;height:340px;background:linear-gradient(0deg,#16161d 0%,transparent 40%),url('${bg}') center/cover no-repeat">
+      <span style="position:absolute;top:14px;right:14px;cursor:pointer;color:#fff;font-size:28px;z-index:10" onclick="this.closest('.wf-overlay').remove()">&times;</span>
+    </div>
+    <div style="padding:0 28px 28px;margin-top:-80px;position:relative;z-index:2">
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div style="flex:0 0 160px"><div style="aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:#1c1c26"><img src="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.opacity=.15"></div></div>
+        <div style="flex:1;min-width:200px">
+          <h2 style="font-size:28px;font-weight:900;margin-bottom:8px">${esc(m.title||'')}</h2>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+            ${rt?`<span style="background:#f5c518;color:#000;padding:3px 10px;border-radius:6px;font-weight:800;font-size:13px">★ ${rt}</span>`:''}
+            <span style="color:#d8d8e0;font-size:14px">${yr(m.releaseDate||m.year||'')}</span>
+            ${m.runtime?`<span style="color:#d8d8e0;font-size:14px">${fmtDur(m.runtime)}</span>`:''}
+            ${m.quality?`<span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:6px;font-weight:700;font-size:12px">${m.quality}</span>`:''}
+          </div>
+          ${genres?`<p style="color:#9a9aa5;font-size:14px;margin-bottom:14px">${esc(genres)}</p>`:''}
+          <p style="color:#d0d0d8;font-size:15px;line-height:1.7;margin-bottom:20px">${esc(m.overview||'')}</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-play" onclick="playItem('${m.slug}',${isSeries})">▶ ${t('play')}</button>
+            <button class="btn-play" style="background:${inWl?'#22c55e':'#ffffff1a'};border:1px solid #ffffff22" onclick="toggleWl('${m.slug}','${esc(m.title)}','${m.posterPath||m.poster||''}','${isSeries?'series':'movie'}',this)">${inWl?'✓ '+t('m_saved')||'Saved':'＋ '+t('nav_watchlist')}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  overlay2.addEventListener('click',e=>{if(e.target===overlay2)overlay2.remove()});
+  document.body.appendChild(overlay2);
+}
+
+function playItem(slug,isSeries){
+  const m=(isSeries?MOCK_SERIES:MOCK_MOVIES).find(x=>x.slug===slug);
+  if(m)cwAdd({slug,title:m.title,poster:m.posterPath||m.poster,backdrop:m.backdropPath||m.backdrop,kind:isSeries?'series':'movie',year:m.year,dur:(m.runtime||90)*60,t:Math.floor(Math.random()*3000)+300});
+  // Close detail overlay
+  document.querySelectorAll('.wf-overlay.open').forEach(o=>o.remove());
+  // Show "playing" message
+  const msg=document.createElement('div');msg.style.cssText='position:fixed;inset:0;background:#000;z-index:9999;display:grid;place-items:center;color:#fff;font-size:24px;font-weight:700';
+  msg.innerHTML=`<div style="text-align:center"><div style="font-size:60px;margin-bottom:20px">▶</div><div>${isSeries?t('prep_stream'):'Playing'}: ${esc(m.title)}</div><div style="font-size:14px;color:#9a9aa5;margin-top:10px">Demo mode — stream not available</div></div>`;
+  msg.onclick=msg.remove;document.body.appendChild(msg);
+  renderHome(); // refresh CW row
+}
+
+function toggleWl(slug,title,poster,kind,btn){
+  const added=wlToggle({slug,title,poster,kind});
+  btn.textContent=added?'✓ Saved':'＋ Watchlist';
+  btn.style.background=added?'#22c55e':'#ffffff1a';
+}
+
+// ===== ROUTER =====
+let kind='movies';
+const homeview=document.getElementById('homeview');
+const gridview=document.getElementById('gridview');
+const hero=document.getElementById('hero');
+const rows=document.getElementById('rows');
+const grid=document.getElementById('grid');
+const gridtitle=document.getElementById('gridtitle');
+const qInput=document.getElementById('q');
+
+function go(path){history.pushState({},'',path);route()}
+function route(){
+  const p=decodeURIComponent(location.pathname);
+  grid.classList.remove('genre-cards');
+  const oldP=document.getElementById('sortPills');if(oldP)oldP.remove();
+  if(p==='/movie'||p==='/movie/'){kind='movies';setActive('movies');renderBrowse('popular',t('nav_movies'),1,false)}
+  else if(p==='/series'||p==='/series/'){kind='series';setActive('series');renderBrowse('popular',t('nav_series'),1,true)}
+  else if(p==='/genre'||p==='/genre/'){setActive('navgenre');renderGenreIndex()}
+  else if(p==='/watchlist'||p==='/watchlist/'){setActive('navwatchlist');renderWatchlist()}
+  else if(p.startsWith('/genre/')){setActive('navgenre');const g=p.slice(7);const items=[...MOCK_MOVIES,...MOCK_SERIES].filter(m=>(m.genres||[]).some(gg=>gg.toLowerCase().includes(g.toLowerCase())));renderGrid(items,`Genre: ${g}`,false)}
+  else if(p==='/profile'){renderProfile()}
+  else{setActive('navhome');renderHome()}
+}
+function setActive(k){
+  document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
+  if(k){const el=document.querySelector(`.nav a[data-kind="${k}"]`);if(el)el.classList.add('active');else if(k==='navhome')document.getElementById('navhome')?.classList.add('active');else if(k==='navgenre')document.getElementById('navgenre')?.classList.add('active');else if(k==='navwatchlist')document.getElementById('navwatchlist')?.classList.add('active')}
+}
+document.querySelectorAll('.nav a[data-kind]').forEach(a=>a.onclick=()=>{kind=a.dataset.kind;qInput.value='';scrollTo(0,0);go(kind==='series'?'/series':'/movie')});
+document.getElementById('navhome').onclick=e=>{e.preventDefault();qInput.value='';go('/')};
+document.getElementById('navgenre').onclick=e=>{e.preventDefault();qInput.value='';go('/genre')};
+document.getElementById('navwatchlist').onclick=e=>{e.preventDefault();qInput.value='';go('/watchlist')};
+
+qInput.oninput=()=>{clearTimeout(searchTimer);const v=qInput.value.trim();searchTimer=setTimeout(()=>{if(v)renderSearch(v);else route()},450)};
+window.addEventListener('popstate',route);
+
+// ===== PROFILE PAGE =====
+function renderProfile(){
+  const u=getUser();
+  if(!u){openAuth('login');return}
+  homeview.classList.add('hide');gridview.classList.add('show');
+  gridtitle.textContent='';grid.innerHTML='';grid.classList.remove('genre-cards');
+  const hex=u.color||'#e50914';
+  const favs=[];const wl=wlList();const cw=cwList();
+  grid.innerHTML=`<div style="max-width:880px;margin:0 auto;padding:4px 2px">
+    <div style="background:linear-gradient(180deg,#ffffff0e,#ffffff04);border:1px solid #ffffff14;border-radius:20px;overflow:hidden;margin-bottom:30px">
+      <div style="height:112px;background:linear-gradient(135deg,${hex}55,${hex}0d)"></div>
+      <div style="display:flex;align-items:flex-end;gap:20px;padding:0 26px;margin-top:-42px;flex-wrap:wrap">
+        <div style="width:98px;height:98px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:40px;color:#fff;flex:0 0 auto;border:4px solid #14141b;background:${hex}">${(u.username||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:210px;padding-bottom:6px">
+          <div style="font-size:25px;font-weight:800;color:#fff">${esc(u.username)}</div>
+          <div style="font-size:13px;color:#7a7a85;margin-top:5px">@${esc(u.username)} · ${esc(u.email||'')}</div>
+          <div style="font-size:13.5px;color:#9a9aa5;margin-top:9px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;gap:6px;background:#ffffff0d;border:1px solid #ffffff12;border-radius:999px;padding:5px 12px">📅 Bergabung ${new Date(u.created).toLocaleDateString('id-ID')}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;background:#ffffff0d;border:1px solid #ffffff12;border-radius:999px;padding:5px 12px">🔖 ${wl.length} watchlist</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:18px 26px 22px">
+        <button class="up-btn" onclick="logout();renderHome()">🚪 ${t('m_logout')}</button>
+      </div>
+    </div>
+    <h3 style="font-size:19px;font-weight:700;color:#fff;margin:0 0 16px;display:flex;align-items:center;gap:10px"><span style="display:inline-block;width:4px;height:20px;border-radius:3px;background:var(--accent)"></span>Watchlist (${wl.length})</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;margin-bottom:30px">
+      ${wl.length?wl.map(w=>{const p2=poster(w.poster,'/w342');return`<a style="text-decoration:none;color:#d4d4dc" href="#" onclick="event.preventDefault();const m=MOCK_${w.kind==='series'?'SERIES':'MOVIES'}.find(x=>x.slug==='${w.slug}');if(m)showDetail(m,${w.kind==='series'})"><div style="aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:#ffffff08;border:1px solid #ffffff0e"><img src="${p2}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.opacity=.12"></div><h4 style="font-size:13px;font-weight:600;margin:8px 2px 0;line-height:1.35;color:#cfcfd8">${esc(w.title||'')}</h4></a>`}).join(''):'<div style="color:#8a8a94;font-size:14px;padding:26px 0;text-align:center">Belum ada watchlist.</div>'}
+    </div>
+    <h3 style="font-size:19px;font-weight:700;color:#fff;margin:0 0 16px;display:flex;align-items:center;gap:10px"><span style="display:inline-block;width:4px;height:20px;border-radius:3px;background:var(--accent)"></span>Lanjut Nonton (${cw.length})</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+      ${cw.length?cw.map(w=>`<a style="text-decoration:none;color:#d4d4dc" href="#" onclick="event.preventDefault()"><div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#ffffff08;border:1px solid #ffffff0e"><img src="${poster(w.backdrop||w.poster,'/w500')}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.opacity=.12"></div><h4 style="font-size:13px;font-weight:600;margin:8px 2px 0;color:#cfcfd8">${esc(w.title||'')}</h4></a>`).join(''):'<div style="color:#8a8a94;font-size:14px;padding:26px 0;text-align:center">Belum ada aktivitas nonton.</div>'}
+    </div>
+  </div>`;
+  bar(100);scrollTo(0,0);
+}
+
+// ===== INIT =====
+route();
+</script>
+</body>
+</html>
